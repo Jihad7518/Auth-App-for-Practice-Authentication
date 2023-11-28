@@ -1,4 +1,3 @@
-
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
@@ -52,6 +51,8 @@ exports.signup = async (req,res) => {
         });
     }
 }
+
+
 //login
 exports.login = async (req,res) => {
     try {
@@ -90,6 +91,8 @@ exports.login = async (req,res) => {
                                     expiresIn:"2h",
                                 });
 
+                                
+
             user = user.toObject();
             user.token = token;
             user.password = undefined;
@@ -115,3 +118,12 @@ exports.login = async (req,res) => {
         }
 
     }
+    catch(error) {
+        console.log(error);
+        return res.status(500).json({
+            success:false,
+            message:'Login Failure',
+        });
+
+    }
+}

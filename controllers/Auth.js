@@ -52,3 +52,40 @@ exports.signup = async (req,res) => {
         });
     }
 }
+//login
+exports.login = async (req,res) => {
+    try {
+
+        //data fetch
+        const {email, password} = req.body;
+        //validation on email and password
+        if(!email || !password) {
+            return res.status(400).json({
+                success:false,
+                message:'PLease fill all the details carefully',
+            });
+        }
+
+        //check for registered user
+        let user = await User.findOne({email});
+        //if not a registered user
+        if(!user) {
+            return res.status(401).json({
+                success:false,
+                message:'User is not registered',
+            });
+        }
+
+        const payload = {
+            email:user.email,
+            id:user._id,
+            role:user.role,
+        };
+        //verify password & generate a JWT token
+        if(await bcrypt.compare(password,user.password) ) {
+            //password match
+            let token =  jwt.sign(payload, 
+                                process.env.JWT_SECRET,
+                                {
+                                    expiresIn:"2h",
+                                });
